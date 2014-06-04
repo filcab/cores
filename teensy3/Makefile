@@ -23,14 +23,14 @@ OPTIONS += -D__MK20DX128__ -DARDUIO=105 -DTEENSYDUINO=118
 #************************************************************************
 
 # path location for Teensy Loader, teensy_post_compile and teensy_reboot
-TOOLSPATH = ../../../tools   # on Linux
+TOOLSPATH = ../../toolchain/prefix
 #TOOLSPATH = ../../../tools/avr/bin   # on Mac or Windows
 
 # path location for Arduino libraries (currently not used)
 LIBRARYPATH = ../../../../libraries
 
 # path location for the arm-none-eabi compiler
-COMPILERPATH = ../../../tools/arm-none-eabi/bin
+COMPILERPATH = $(TOOLSPATH)/bin
 
 #************************************************************************
 # Settings below this point usually do not need to be edited
@@ -39,22 +39,23 @@ COMPILERPATH = ../../../tools/arm-none-eabi/bin
 # CPPFLAGS = compiler options for C and C++
 CPPFLAGS = -Wall -g -Os -mcpu=cortex-m4 -mthumb -nostdlib -MMD $(OPTIONS) -I.
 
+TEENSY3_TARGET=arm-none-eabi
 # compiler options for C++ only
-CXXFLAGS = -std=gnu++0x -felide-constructors -fno-exceptions -fno-rtti
+CXXFLAGS = -std=c++11 -felide-constructors -fno-exceptions -fno-rtti --target=$(TEENSY3_TARGET) -nostdinc --sysroot=/Applications/Electronics/Arduino.app/Contents/Resources/Java/hardware/tools/arm-none-eabi/arm-none-eabi -isystem /Applications/Electronics/Arduino.app/Contents/Resources/Java/hardware/tools/arm-none-eabi/lib/gcc/arm-none-eabi/4.7.2/include-fixed -isystem /Applications/Electronics/Arduino.app/Contents/Resources/Java/hardware/tools/arm-none-eabi/lib/gcc/arm-none-eabi/4.7.2/include -U__STDC_HOSTED__
 
 # compiler options for C only
-CFLAGS =
+CFLAGS = -std=c11 --target=$(TEENSY3_TARGET) -nostdinc --sysroot=/Applications/Electronics/Arduino.app/Contents/Resources/Java/hardware/tools/arm-none-eabi/arm-none-eabi -isystem /Applications/Electronics/Arduino.app/Contents/Resources/Java/hardware/tools/arm-none-eabi/lib/gcc/arm-none-eabi/4.7.2/include-fixed -isystem /Applications/Electronics/Arduino.app/Contents/Resources/Java/hardware/tools/arm-none-eabi/lib/gcc/arm-none-eabi/4.7.2/include -U__STDC_HOSTED__
 
 # linker options
-LDFLAGS = -Os -Wl,--gc-sections -mcpu=cortex-m4 -mthumb -Tmk20dx128.ld
+LDFLAGS = -Os -Wl,--gc-sections -mcpu=cortex-m4 -mthumb -Tmk20dx128.ld --sysroot=/Applications/Electronics/Arduino.app/Contents/Resources/Java/hardware/tools/arm-none-eabi/arm-none-eabi
 
 # additional libraries to link
 LIBS = -lm
 
 
 # names for the compiler programs
-CC = $(abspath $(COMPILERPATH))/arm-none-eabi-gcc
-CXX = $(abspath $(COMPILERPATH))/arm-none-eabi-g++
+CC = clang
+CXX = clang++
 OBJCOPY = $(abspath $(COMPILERPATH))/arm-none-eabi-objcopy
 SIZE = $(abspath $(COMPILERPATH))/arm-none-eabi-size
 
