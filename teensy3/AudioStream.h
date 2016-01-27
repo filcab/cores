@@ -33,9 +33,15 @@
 
 #include "Arduino.h"
 
+#if defined(KINETISK)
 #define AUDIO_BLOCK_SAMPLES  128
-#define AUDIO_SAMPLE_RATE    44100
+#define AUDIO_SAMPLE_RATE    44117.64706
 #define AUDIO_SAMPLE_RATE_EXACT 44117.64706 // 48 MHz / 1088, or 96 MHz * 2 / 17 / 256
+#elif defined(KINETISL)
+#define AUDIO_BLOCK_SAMPLES  64
+#define AUDIO_SAMPLE_RATE    22058.82353
+#define AUDIO_SAMPLE_RATE_EXACT 22058.82353 // 48 MHz / 2176, or 96 MHz * 1 / 17 / 256
+#endif
 
 class AudioStream;
 class AudioConnection;
@@ -43,6 +49,8 @@ class AudioConnection;
 typedef struct audio_block_struct {
 	unsigned char ref_count;
 	unsigned char memory_pool_index;
+	unsigned char reserved1;
+	unsigned char reserved2;
 	int16_t data[AUDIO_BLOCK_SAMPLES];
 } audio_block_t;
 
@@ -139,8 +147,7 @@ private:
 	static AudioStream *first_update; // for update_all
 	AudioStream *next_update; // for update_all
 	static audio_block_t *memory_pool;
-	static uint8_t memory_pool_size;
-	static uint32_t memory_pool_available_mask;
+	static uint32_t memory_pool_available_mask[6];
 };
 
 #endif
